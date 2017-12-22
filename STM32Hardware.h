@@ -50,24 +50,24 @@ class STM32Hardware
     }
 
     // Read a byte of data from ROS connection.
-    // If no data & hal timeout , returns -1
+    // If no data , hal_uart-timeout, returns -1
     int read()
     {
-      // BSP_LED_Toggle(LED1);
+//      BSP_LED_Toggle(LED1);
       return (HAL_UART_Receive(&UartHandle, RxBuffer, 1, 20) == HAL_OK) ? *RxBuffer : -1;
     }
 
     // Send a byte of data to ROS connection
     void write(uint8_t* data, int length)
     {
-      // BSP_LED_Toggle(LED2);
+//      BSP_LED_Toggle(LED2);
       HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, 20);
     }
 
     // Returns milliseconds since start of program
     unsigned long time(void)
     {
-      // BSP_LED_Toggle(LED3);
+//      BSP_LED_Toggle(LED3);
       return HAL_GetTick();
     }
 
