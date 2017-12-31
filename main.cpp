@@ -51,6 +51,12 @@ extern "C"
 #include <ros.h>
 #include "std_msgs/String.h"
 
+
+//extern UART_HandleTypeDef UartHandle;
+//extern uint8_t Buffer_1;
+//extern uint8_t *RxBuffer;
+
+
 ros::NodeHandle nh;
 
 std_msgs::String str_msg;
@@ -93,16 +99,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  //  MX_USART6_UART_Init();
+  MX_USART6_UART_Init();
 
 
-//  /* for test uart in main */
-//  HAL_UART_Receive_IT(&huart6, (uint8_t *)rx, 1);
-//
+  /* for test uart in main */
+//  HAL_UART_Receive_IT(&UartHandle, (uint8_t *)rx, 1);
+
 //  while (1)
 //  {
 //      HAL_UART_Transmit_IT(&huart6, (uint8_t*)hello, sizeof(hello) / sizeof(hello[0]));
 //  }
+
 
   /* advertise */
 

@@ -221,6 +221,16 @@ void USART3_IRQHandler(void)
 
 }
 
+void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart)
+{
+
+//  UartReady = SET;
+
+  /* Turn LED3 on: Transfer in reception process is correct */
+//  BSP_LED_Toggle(LED4);
+//  trace_printf("call back RX\n");
+}
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
