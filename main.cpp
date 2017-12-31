@@ -47,6 +47,7 @@ extern "C"
 #include "stm32f4xx_hal.h"
 #include "diag/Trace.h"
 
+
 #include <ros.h>
 #include "std_msgs/String.h"
 
@@ -56,6 +57,16 @@ std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
 
 char hello2[] = "nQuantum test from STM32!";
+
+
+//#include <ros.h>
+//#include <std_msgs/Empty.h>
+//
+//void messageCb( const std_msgs::Empty& toggle_msg);
+//
+//ros::NodeHandle nh;
+//
+//ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
 
 
 /* for test uart in main */
@@ -93,6 +104,7 @@ int main(void)
 //      HAL_UART_Transmit_IT(&huart6, (uint8_t*)hello, sizeof(hello) / sizeof(hello[0]));
 //  }
 
+  /* advertise */
 
   uint32_t lasttime = 0;
 
@@ -111,6 +123,16 @@ int main(void)
     }
     nh.spinOnce();
   }
+
+  /* subscribe */
+
+//  nh.initNode();
+//  nh.subscribe(sub);
+//
+//  while(1)
+//  {
+//      nh.spinOnce();
+//  }
 
 }
 
@@ -266,6 +288,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /* USER CODE END Callback 1 */
 }
+
+
+/* subscribe */
+
+//void messageCb( const std_msgs::Empty& toggle_msg)
+//{
+//  HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);  // blink the led
+//}
 
 /**
   * @brief  This function is executed in case of error occurrence.
