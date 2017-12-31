@@ -6,11 +6,10 @@ extern "C"
   #include "main.h"
 }
 
-static void Error_Handler(void);
-
 UART_HandleTypeDef UartHandle;
-uint8_t *RxBuffer;
 uint8_t Buffer_1;
+uint8_t *RxBuffer = &Buffer_1;
+
 
 class STM32Hardware
 {
@@ -27,7 +26,7 @@ class STM32Hardware
           - Parity = None
           - BaudRate = 57600 baud
           - Hardware flow control disabled (RTS and CTS signals) */
-      UartHandle.Instance        = USART3;
+      UartHandle.Instance        = USART3;  // uart3 = usb, uart6 = gpio
 
       UartHandle.Init.BaudRate     = 57600;
       UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
@@ -35,7 +34,7 @@ class STM32Hardware
       UartHandle.Init.Parity       = UART_PARITY_NONE;
       UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
       UartHandle.Init.Mode         = UART_MODE_TX_RX;
-      UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
+      UartHandle.Init.OverSampling = UART_OVERSAMPLING_16; // compensate baud error
 
       if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
       {
@@ -46,7 +45,6 @@ class STM32Hardware
         Error_Handler();
       }
 
-      RxBuffer = &Buffer_1;
     }
 
     // Read a byte of data from ROS connection.
@@ -54,14 +52,14 @@ class STM32Hardware
     int read()
     {
 //      BSP_LED_Toggle(LED1);
-      return (HAL_UART_Receive(&UartHandle, RxBuffer, 1, 20) == HAL_OK) ? *RxBuffer : -1;
+      return (HAL_UART_Receive(&UartHandle, RxBuffer, 1, 15) == HAL_OK) ? *RxBuffer : -1;
     }
 
     // Send a byte of data to ROS connection
     void write(uint8_t* data, int length)
     {
 //      BSP_LED_Toggle(LED2);
-      HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, 20);
+      HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, HAL_MAX_DELAY);
     }
 
     // Returns milliseconds since start of program
