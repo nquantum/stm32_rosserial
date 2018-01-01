@@ -37,12 +37,6 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-
-extern "C"
-{
-  /* may put c-header file */
-}
-
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "diag/Trace.h"
@@ -52,9 +46,8 @@ extern "C"
 #include "std_msgs/String.h"
 
 
-//extern UART_HandleTypeDef UartHandle;
-//extern uint8_t Buffer_1;
-//extern uint8_t *RxBuffer;
+//__IO ITStatus TxReady = RESET;
+__IO ITStatus RxReady = RESET;
 
 
 ros::NodeHandle nh;
@@ -76,16 +69,15 @@ char hello2[] = "nQuantum test from STM32!";
 
 
 /* for test uart in main */
-UART_HandleTypeDef huart6;
+//UART_HandleTypeDef huart6;
 //uint8_t hello[] = "Finally UART IT work";
 //uint8_t RxBuffer2;
 //uint8_t *rx = &RxBuffer2;
-__IO ITStatus UartReady = RESET;
 
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART6_UART_Init(void);
+//static void MX_USART6_UART_Init(void);
 
 
 int main(void)
@@ -109,6 +101,11 @@ int main(void)
 //  {
 //      HAL_UART_Transmit_IT(&huart6, (uint8_t*)hello, sizeof(hello) / sizeof(hello[0]));
 //  }
+
+  HAL_GPIO_WritePin(GREEN_GPIO_Port, GREEN_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(ORANGE_GPIO_Port, ORANGE_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(RED_GPIO_Port, RED_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(BLUE_GPIO_Port, BLUE_Pin, GPIO_PIN_SET);
 
 
   /* advertise */
@@ -200,23 +197,23 @@ void SystemClock_Config(void)
 }
 
 /* USART6 init function */
-static void MX_USART6_UART_Init(void)
-{
-
-  huart6.Instance = USART6;
-  huart6.Init.BaudRate = 57600;
-  huart6.Init.WordLength = UART_WORDLENGTH_8B;
-  huart6.Init.StopBits = UART_STOPBITS_1;
-  huart6.Init.Parity = UART_PARITY_NONE;
-  huart6.Init.Mode = UART_MODE_TX_RX;
-  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart6) != HAL_OK)
-  {
-    _Error_Handler(__FILE__, __LINE__);
-  }
-
-}
+//static void MX_USART6_UART_Init(void)
+//{
+//
+//  huart6.Instance = USART6;
+//  huart6.Init.BaudRate = 57600;
+//  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+//  huart6.Init.StopBits = UART_STOPBITS_1;
+//  huart6.Init.Parity = UART_PARITY_NONE;
+//  huart6.Init.Mode = UART_MODE_TX_RX;
+//  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+//  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+//  if (HAL_UART_Init(&huart6) != HAL_OK)
+//  {
+//    _Error_Handler(__FILE__, __LINE__);
+//  }
+//
+//}
 
 /** Configure pins as 
         * Analog 
@@ -315,6 +312,7 @@ void _Error_Handler(char * file, int line)
   /* User can add his own implementation to report the HAL error return state */
   while(1) 
   {
+      HAL_GPIO_WritePin(BLUE_GPIO_Port, BLUE_Pin, GPIO_PIN_RESET);
   }
   /* USER CODE END Error_Handler_Debug */ 
 }

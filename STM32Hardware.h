@@ -1,18 +1,14 @@
 #ifndef _STM32_HARDWARE_H_
 #define _STM32_HARDWARE_H_
 
-extern "C"
-{
-  #include "main.h"
-}
 
 UART_HandleTypeDef UartHandle;
 uint8_t Buffer_1;
 uint8_t *RxBuffer = &Buffer_1;
 
-extern __IO ITStatus UartReady;
-__IO ITStatus TxReady = RESET;
-//extern UART_HandleTypeDef huart6;
+//extern __IO ITStatus TxReady;
+extern __IO ITStatus RxReady;
+
 
 class STM32Hardware
 {
@@ -48,7 +44,6 @@ class STM32Hardware
         Error_Handler();
       }
 
-//      HAL_UART_Receive_IT(&huart6, RxBuffer, 1);
       HAL_UART_Receive_IT(&UartHandle, RxBuffer, 1);
     }
 
@@ -56,12 +51,10 @@ class STM32Hardware
     // If no data , hal_uart-timeout, returns -1
     int read()
     {
-//      BSP_LED_Toggle(LED1);
-//      return (HAL_UART_Receive(&huart6, RxBuffer, 1, 15) == HAL_OK) ? *RxBuffer : -1;
-      if (UartReady == SET)
+//      return (HAL_UART_Receive(&UartHandle, RxBuffer, 1, 15) == HAL_OK) ? *RxBuffer : -1;
+      if (RxReady == SET)
       {
-        UartReady = RESET;
-//        HAL_UART_Receive_IT(&huart6, RxBuffer, 1);
+        RxReady = RESET;
         HAL_UART_Receive_IT(&UartHandle, RxBuffer, 1);
         return *RxBuffer;
       }
@@ -72,7 +65,6 @@ class STM32Hardware
     // Send a byte of data to ROS connection
     void write(uint8_t* data, int length)
     {
-//      BSP_LED_Toggle(LED2);
       HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, HAL_MAX_DELAY);
 //      HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)data, (uint16_t)length);
 //      while (TxReady != SET);
@@ -82,7 +74,6 @@ class STM32Hardware
     // Returns milliseconds since start of program
     unsigned long time(void)
     {
-//      BSP_LED_Toggle(LED3);
       return HAL_GetTick();
     }
 

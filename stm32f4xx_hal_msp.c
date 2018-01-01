@@ -170,6 +170,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     /* USART3 interrupt DeInit */
     HAL_NVIC_DisableIRQ(USART3_IRQn);
   }
+  else
+    Error_Handler();
 
 }
 

@@ -35,19 +35,13 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
 
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim1;
 
-//extern UART_HandleTypeDef huart6;
-
 extern UART_HandleTypeDef UartHandle;
 
-extern __IO ITStatus UartReady;
-extern __IO ITStatus TxReady;
+//extern __IO ITStatus TxReady;
+extern __IO ITStatus RxReady;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -217,31 +211,27 @@ void USART6_IRQHandler(void)
 /**
 * @brief This function handles USART3 global interrupt.
 */
-void USART3_IRQHandler(void)
-{
-
+//void USART3_IRQHandler(void)
+//{
+//
 //  HAL_UART_IRQHandler(&huart3);
+//
+//}
 
-}
-
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-{
-
-  TxReady = SET;
-
-  /* Turn LED3 on: Transfer in reception process is correct */
-//  BSP_LED_Toggle(LED4);
-//  trace_printf("call back RX\n");
-}
+//void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//
+////  HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
+//  TxReady = SET;
+//
+//}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-  UartReady = SET;
+//  HAL_GPIO_TogglePin(RED_GPIO_Port, RED_Pin);
+  RxReady = SET;
 
-  /* Turn LED3 on: Transfer in reception process is correct */
-//  BSP_LED_Toggle(LED4);
-//  trace_printf("call back RX\n");
 }
 
 /* USER CODE BEGIN 1 */
