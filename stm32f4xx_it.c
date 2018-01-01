@@ -40,11 +40,14 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern UART_HandleTypeDef huart6;
+extern TIM_HandleTypeDef htim1;
+
+//extern UART_HandleTypeDef huart6;
+
+extern UART_HandleTypeDef UartHandle;
 
 extern __IO ITStatus UartReady;
-
-extern TIM_HandleTypeDef htim1;
+extern __IO ITStatus TxReady;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -207,7 +210,7 @@ void TIM1_UP_TIM10_IRQHandler(void)
 void USART6_IRQHandler(void)
 {
 
-  HAL_UART_IRQHandler(&huart6);
+  HAL_UART_IRQHandler(&UartHandle);
 
 }
 
@@ -221,10 +224,10 @@ void USART3_IRQHandler(void)
 
 }
 
-void HAL_UART_TxHalfCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-//  UartReady = SET;
+  TxReady = SET;
 
   /* Turn LED3 on: Transfer in reception process is correct */
 //  BSP_LED_Toggle(LED4);

@@ -99,7 +99,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART6_UART_Init();
+//  MX_USART6_UART_Init();
 
 
   /* for test uart in main */
