@@ -40,6 +40,9 @@ extern TIM_HandleTypeDef htim1;
 
 extern UART_HandleTypeDef UartHandle;
 
+extern DMA_HandleTypeDef udma_tx;
+extern DMA_HandleTypeDef udma_rx;
+
 extern __IO ITStatus TxReady;
 extern __IO ITStatus RxReady;
 
@@ -198,29 +201,35 @@ void TIM1_UP_TIM10_IRQHandler(void)
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
-/**
-  * @brief  This function handles DMA interrupt request.
-  * @param  None
-  * @retval None
-  * @Note   This function is redefined in "main.h" and related to DMA
-  *         used for USART data transmission
-  */
+//void DMA1_Stream1_IRQHandler(void)
+//{
+//  HAL_DMA_IRQHandler(&udma_rx);
+//}
+//
+//void DMA1_Stream3_IRQHandler(void)
+//{
+//  HAL_DMA_IRQHandler(&udma_tx);
+//}
+
 void DMA2_Stream2_IRQHandler(void)
 {
-  HAL_DMA_IRQHandler(UartHandle.hdmarx);
+  HAL_DMA_IRQHandler(&udma_rx);
+}
+
+void DMA2_Stream6_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&udma_tx);
 }
 
 /**
-  * @brief  This function handles DMA interrupt request.
-  * @param  None
-  * @retval None
-  * @Note   This function is redefined in "main.h" and related to DMA
-  *         used for USART data reception
-  */
-void DMA2_Stream6_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(UartHandle.hdmatx);
-}
+* @brief This function handles USART3 global interrupt.
+*/
+//void USART3_IRQHandler(void)
+//{
+//
+//  HAL_UART_IRQHandler(&UartHandle);
+//
+//}
 
 /**
 * @brief This function handles USART6 global interrupt.
@@ -232,20 +241,10 @@ void USART6_IRQHandler(void)
 
 }
 
-/**
-* @brief This function handles USART3 global interrupt.
-*/
-//void USART3_IRQHandler(void)
-//{
-//
-//  HAL_UART_IRQHandler(&huart3);
-//
-//}
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-//  HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
   TxReady = SET;
 
 }
@@ -253,12 +252,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-//  HAL_GPIO_TogglePin(RED_GPIO_Port, RED_Pin);
   RxReady = SET;
 
 }
 
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

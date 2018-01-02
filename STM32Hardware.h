@@ -6,8 +6,11 @@ UART_HandleTypeDef UartHandle;
 uint8_t Buffer_1;
 uint8_t *RxBuffer = &Buffer_1;
 
-//extern __IO ITStatus TxReady;
-extern __IO ITStatus RxReady;
+__IO ITStatus TxReady = RESET;
+__IO ITStatus RxReady = RESET;
+
+DMA_HandleTypeDef udma_tx;
+DMA_HandleTypeDef udma_rx;
 
 
 class STM32Hardware
@@ -35,28 +38,30 @@ class STM32Hardware
       UartHandle.Init.Mode         = UART_MODE_TX_RX;
       UartHandle.Init.OverSampling = UART_OVERSAMPLING_16; // compensate baud error
 
-//      if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
-//      {
-//        Error_Handler();
-//      }
+      if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
+      {
+        Error_Handler();
+      }
       if(HAL_UART_Init(&UartHandle) != HAL_OK)
       {
         Error_Handler();
       }
 
-      HAL_UART_Receive_IT(&UartHandle, RxBuffer, 1);
+//      HAL_UART_Receive_IT(&UartHandle, (uint8_t*)RxBuffer, 1);
+      HAL_UART_Receive_DMA(&UartHandle, (uint8_t*)RxBuffer, 1);
     }
 
     // Read a byte of data from ROS connection.
     // If no data , hal_uart-timeout, returns -1
     int read()
     {
-//      return (HAL_UART_Receive(&UartHandle, RxBuffer, 1, 15) == HAL_OK) ? *RxBuffer : -1;
+//      return (HAL_UART_Receive(&UartHandle, (uint8_t*)RxBuffer, 1, 15) == HAL_OK) ? (uint8_t)*RxBuffer : -1;
       if (RxReady == SET)
       {
         RxReady = RESET;
-        HAL_UART_Receive_IT(&UartHandle, RxBuffer, 1);
-        return *RxBuffer;
+//        HAL_UART_Receive_IT(&UartHandle, (uint8_t*)RxBuffer, 1);
+        HAL_UART_Receive_DMA(&UartHandle, (uint8_t*)RxBuffer, 1);
+        return (uint8_t)*RxBuffer;
       }
       else
         return -1;
@@ -65,10 +70,11 @@ class STM32Hardware
     // Send a byte of data to ROS connection
     void write(uint8_t* data, int length)
     {
-      HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, HAL_MAX_DELAY);
+//      HAL_UART_Transmit(&UartHandle, (uint8_t*)data, (uint16_t)length, HAL_MAX_DELAY);
 //      HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)data, (uint16_t)length);
-//      while (TxReady != SET);
-//      TxReady = RESET;
+      HAL_UART_Transmit_DMA(&UartHandle, (uint8_t*)data, (uint16_t)length);
+      while (TxReady != SET);
+      TxReady = RESET;
     }
 
     // Returns milliseconds since start of program

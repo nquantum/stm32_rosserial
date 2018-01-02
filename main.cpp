@@ -46,10 +46,6 @@
 #include "std_msgs/String.h"
 
 
-__IO ITStatus TxReady = RESET;
-__IO ITStatus RxReady = RESET;
-
-
 ros::NodeHandle nh;
 
 std_msgs::String str_msg;
@@ -95,8 +91,9 @@ int main(void)
 
 
   /* for test uart in main */
-//  HAL_UART_Receive_IT(&UartHandle, (uint8_t *)rx, 1);
 
+//  HAL_UART_Receive_IT(&UartHandle, (uint8_t *)rx, 1);
+//
 //  while (1)
 //  {
 //      HAL_UART_Transmit_IT(&huart6, (uint8_t*)hello, sizeof(hello) / sizeof(hello[0]));
@@ -197,6 +194,7 @@ void SystemClock_Config(void)
 }
 
 /* USART6 init function */
+
 //static void MX_USART6_UART_Init(void)
 //{
 //
