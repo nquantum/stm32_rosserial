@@ -40,7 +40,7 @@ extern TIM_HandleTypeDef htim1;
 
 extern UART_HandleTypeDef UartHandle;
 
-//extern __IO ITStatus TxReady;
+extern __IO ITStatus TxReady;
 extern __IO ITStatus RxReady;
 
 /******************************************************************************/
@@ -199,6 +199,30 @@ void TIM1_UP_TIM10_IRQHandler(void)
 }
 
 /**
+  * @brief  This function handles DMA interrupt request.
+  * @param  None
+  * @retval None
+  * @Note   This function is redefined in "main.h" and related to DMA
+  *         used for USART data transmission
+  */
+void DMA2_Stream2_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(UartHandle.hdmarx);
+}
+
+/**
+  * @brief  This function handles DMA interrupt request.
+  * @param  None
+  * @retval None
+  * @Note   This function is redefined in "main.h" and related to DMA
+  *         used for USART data reception
+  */
+void DMA2_Stream6_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(UartHandle.hdmatx);
+}
+
+/**
 * @brief This function handles USART6 global interrupt.
 */
 void USART6_IRQHandler(void)
@@ -218,13 +242,13 @@ void USART6_IRQHandler(void)
 //
 //}
 
-//void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
-//{
-//
-////  HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
-//  TxReady = SET;
-//
-//}
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+
+//  HAL_GPIO_TogglePin(GREEN_GPIO_Port, GREEN_Pin);
+  TxReady = SET;
+
+}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {

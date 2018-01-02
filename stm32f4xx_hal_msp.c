@@ -77,6 +77,8 @@ void HAL_MspInit(void)
 
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
+  static DMA_HandleTypeDef hdma_tx;
+  static DMA_HandleTypeDef hdma_rx;
 
   /* uart3 = usb, uart6 = gpio */
 
@@ -89,6 +91,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
     /* Peripheral clock enable */
     __HAL_RCC_USART6_CLK_ENABLE();
+
+    /* Enable DMA clock */
+    __HAL_RCC_DMA2_CLK_ENABLE();
   
     /**USART6 GPIO Configuration    
     PG14     ------> USART6_TX
@@ -101,8 +106,62 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
     HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-    /* USART6 interrupt Init */
-    HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
+//    /* USART6 interrupt Init */
+//    HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
+//    HAL_NVIC_EnableIRQ(USART6_IRQn);
+
+    /*##-3- Configure the DMA ##################################################*/
+    /* Configure the DMA handler for Transmission process */
+    hdma_tx.Instance                 = DMA2_Stream6;
+    hdma_tx.Init.Channel             = DMA_CHANNEL_5;
+    hdma_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+    hdma_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+    hdma_tx.Init.MemInc              = DMA_MINC_ENABLE;
+    hdma_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+    hdma_tx.Init.Mode                = DMA_NORMAL;
+    hdma_tx.Init.Priority            = DMA_PRIORITY_LOW;
+    hdma_tx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
+    hdma_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+    hdma_tx.Init.MemBurst            = DMA_MBURST_INC4;
+    hdma_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
+
+    HAL_DMA_Init(&hdma_tx);
+
+    /* Associate the initialized DMA handle to the UART handle */
+    __HAL_LINKDMA(huart, hdmatx, hdma_tx);
+
+    /* Configure the DMA handler for reception process */
+    hdma_rx.Instance                 = DMA2_Stream2;
+    hdma_rx.Init.Channel             = DMA_CHANNEL_5;
+    hdma_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+    hdma_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
+    hdma_rx.Init.MemInc              = DMA_MINC_ENABLE;
+    hdma_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+    hdma_rx.Init.Mode                = DMA_NORMAL;
+    hdma_rx.Init.Priority            = DMA_PRIORITY_HIGH;
+    hdma_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
+    hdma_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+    hdma_rx.Init.MemBurst            = DMA_MBURST_INC4;
+    hdma_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
+
+    HAL_DMA_Init(&hdma_rx);
+
+    /* Associate the initialized DMA handle to the the UART handle */
+    __HAL_LINKDMA(huart, hdmarx, hdma_rx);
+
+    /*##-4- Configure the NVIC for DMA #########################################*/
+    /* NVIC configuration for DMA transfer complete interrupt (USART6_TX) */
+    HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 1);
+    HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
+
+    /* NVIC configuration for DMA transfer complete interrupt (USART6_RX) */
+    HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+
+    /* NVIC for USART, to catch the TX complete */
+    HAL_NVIC_SetPriority(USART6_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(USART6_IRQn);
 
   }

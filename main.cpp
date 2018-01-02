@@ -46,7 +46,7 @@
 #include "std_msgs/String.h"
 
 
-//__IO ITStatus TxReady = RESET;
+__IO ITStatus TxReady = RESET;
 __IO ITStatus RxReady = RESET;
 
 
